@@ -1,31 +1,24 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import ExerciseItem from "./ExerciseItem";
 import Navbar from "./Navbar";
 import {Link} from 'react-router-dom';
 
+import { fetchExercises,deleteExerciseById } from "../Api/fetchExercises";
+
 function ExerciseList() {
   const [exercises, setExercises] = useState([]);
 
   useEffect(() => {
-    console.log("testing");
-    axios.get("http://localhost:5000/exercises/").then((res) => {
-      if (res.data.length > 0) {
-        setExercises(res.data);
-      }
+    fetchExercises().then((res)=>{
+        setExercises(res);
     });
   }, []);
 
-  useEffect(() => {
-    console.log(exercises);
-  }, [exercises]);
-
   function deleteExercise(id) {
-    axios
-      .delete(`http://localhost:5000/exercises/${id}`)
-      .then((res) => console.log(res.data));
-
-    setExercises(exercises.filter((el) => el._id !== id));
+    deleteExerciseById(id).then((res)=>{
+      console.log(res);
+      setExercises(exercises.filter((el) => el._id !== id));
+    });
   }
 
   return (

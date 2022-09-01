@@ -1,8 +1,11 @@
 import React from "react";
-import axios from "axios";
 
 import Navbar from "./Navbar";
 import {Link} from 'react-router-dom';
+
+import { addUsers } from "../Api/fetchUsers";
+import FormInput from "./Form/FormInput";
+import Button from "./Form/Button";
 
 export default class CreateUser extends React.Component {
   constructor(props) {
@@ -29,14 +32,11 @@ export default class CreateUser extends React.Component {
       username: this.state.username,
     };
 
-    console.log(user);
-
-    axios
-      .post("http://localhost:5000/users/add", user)
-      .then((res) => console.log(res.data));
-
-    this.setState({
-      username: "",
+    addUsers(user).then((res)=>{
+      console.log(res.data);
+      this.setState({
+        username: "",
+      });
     });
   }
 
@@ -62,22 +62,8 @@ export default class CreateUser extends React.Component {
       </Navbar>
         <h3>Create New User</h3>
         <form onSubmit={this.onSubmit}>
-          <div className='form-group'>
-            <label>Username: </label>
-            <input
-              type='text'
-              className='form-control'
-              placeholder='Username'
-              value={this.state.username}
-              onChange={this.onChangeUsername}
-              required
-            />
-          </div>
-          <div className='form-group'>
-            <button type='submit' className='btn btn-primary'>
-              Submit
-            </button>
-          </div>
+          <FormInput label='Username' value={this.state.username} name='username' onChange={this.onChangeUsername}></FormInput>
+          <Button label="Submit"></Button>
         </form>
       </div>
     );

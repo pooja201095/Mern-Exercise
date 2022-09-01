@@ -11,6 +11,7 @@ function App() {
     <Router>
       <div className='container'>
         <br />
+        <p>learn react</p>
         <Routes>
           <Route path='/' exact element={<ExerciseList />} />
           <Route path='/edit/:id' element={<EditExercise />} />

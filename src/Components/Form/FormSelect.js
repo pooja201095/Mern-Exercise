@@ -11,7 +11,7 @@ function FormSelect(props) {
   
     return (
         <div className='form-group'>
-        <label>{label}  </label>
+        <label>{label}</label>
         <select
           ref={useRef('username')}
           className='form-control'

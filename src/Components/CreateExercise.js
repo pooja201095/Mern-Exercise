@@ -1,11 +1,13 @@
 import React from "react";
-import axios from "axios";
 import {Link} from 'react-router-dom';
 
 
 import FormSelect from "./Form/FormSelect";
 import Navbar from "./Navbar";
 import Form from "./Form";
+
+import { fetchUsers } from "../Api/fetchUsers";
+import { addExercise } from "../Api/fetchExercises";
 
 
 export default class CreateExercise extends React.Component {
@@ -25,13 +27,11 @@ export default class CreateExercise extends React.Component {
   }
 
   componentDidMount() {
-    axios.get("http://localhost:5000/users/").then((res) => {
-      if (res.data.length > 0) {
-        this.setState({
-          users: res.data.map((user) => user.username),
-          username: res.data[0].username,
-        });
-      }
+    fetchUsers().then((res)=>{
+      this.setState({
+        users: res.map((user) => user.username),
+        username: res[0].username,
+      });
     });
   }
 
@@ -59,13 +59,14 @@ export default class CreateExercise extends React.Component {
       date: this.state.date,
     };
 
-    console.log(exercise);
+    console.log('sub',exercise);
 
-    axios
-      .post(`http://localhost:5000/exercises/add`, exercise)
-      .then((res) => console.log(res.data));
+    addExercise(exercise).then((res)=>{
+      console.log('data',res);
+      window.location = "/";
+    }).catch((err)=>console.log(err));
 
-    window.location = "/";
+   
   }
 
   render() {
@@ -84,7 +85,7 @@ export default class CreateExercise extends React.Component {
         </li>
       </Navbar>
         <h3>Create New Exercise Log</h3>
-        <Form onSubmit={this.onSubmit} username={this.state.username} description={this.state.description} duration={this.state.duration} date={this.state.date}  handleFormChange={this.handleFormChange} >
+        <Form onSubmit={this.onSubmit} username={this.state.username} description={this.state.description} duration={this.state.duration} date={this.state.date} submitLabel="Submit" handleFormChange={this.handleFormChange} >
           <FormSelect label='User' value={this.state.username} name='username' onChange={this.handleFormChange} users={this.state.users}></FormSelect>
         </Form>
       </div>

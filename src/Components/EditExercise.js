@@ -1,11 +1,13 @@
 import React from "react";
-import axios from "axios";
 import {Link} from 'react-router-dom';
 
 import withRouter from "./withRouter";
 import FormSelect from "./Form/FormSelect";
 import Form from "./Form";
 import Navbar from "./Navbar";
+
+import { fetchExerciseById, updateExercise } from "../Api/fetchExercises";
+import { fetchUsers } from "../Api/fetchUsers";
 
 class EditExercise extends React.Component {
   constructor(props) {
@@ -25,25 +27,20 @@ class EditExercise extends React.Component {
   }
 
   componentDidMount() {
-    axios
-      .get("http://localhost:5000/exercises/" + this.state.currentId)
-      .then((res) => {
+      fetchExerciseById(this.state.currentId).then((res)=>{
         this.setState({
-          username: res.data.username,
-          description: res.data.description,
-          duration: res.data.duration,
-          date: new Date(res.data.date),
+          username: res.username,
+          description: res.description,
+          duration: res.duration,
+          date: new Date(Date.parse(res.date))
         });
-      })
-      .catch((err) => console.log(err));
-
-    axios.get("http://localhost:5000/users/").then((res) => {
-      if (res.data.length > 0) {
+      });
+    
+      fetchUsers().then((res)=>{
         this.setState({
-          users: res.data.map((user) => user.username),
+          users: res.map((user) => user.username)
         });
-      }
-    });
+      });
   }
 
   handleFormChange=(e)=> {
@@ -71,14 +68,12 @@ class EditExercise extends React.Component {
       date: this.state.date,
     };
 
-    axios
-      .post(
-        `http://localhost:5000/exercises/update/${this.state.currentId}`,
-        exercise
-      )
-      .then((res) => console.log(res.data));
+    updateExercise(this.state.currentId,exercise).then((res)=>{
+      console.log(res);
+      window.location = "/";
+    });
 
-    window.location = "/";
+   
   }
 
   render(){
@@ -102,7 +97,7 @@ class EditExercise extends React.Component {
         </li>
       </Navbar>
         <h3>Edit Exercise</h3>
-        <Form onSubmit={this.onSubmit} username={this.state.username} description={this.state.description} duration={this.state.duration} date={this.state.date} handleFormChange={this.handleFormChange}>
+        <Form onSubmit={this.onSubmit} username={this.state.username} description={this.state.description} duration={this.state.duration} date={this.state.date} submitLabel="Edit" handleFormChange={this.handleFormChange}>
           <FormSelect label='User' value={this.state.username} name='username' onChange={this.handleFormChange} users={this.state.users}></FormSelect>
         </Form>
       </div>
